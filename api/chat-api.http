@@ -1,0 +1,33 @@
+@baseUrl = https://localhost:5001/api
+@token = <JWT_TOKEN_HERE>
+@chatId = 1
+
+### 1) Create chat
+POST {{baseUrl}}/chats
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "todayMood": 3
+}
+
+### 2) Send message
+POST {{baseUrl}}/chats/{{chatId}}/messages
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "message": "I'm feeling anxious about work deadlines"
+}
+
+### 3) Get chat details
+GET {{baseUrl}}/chats/{{chatId}}
+Authorization: Bearer {{token}}
+
+### 4) Get chat history
+GET {{baseUrl}}/chats?pageNumber=1&pageSize=10
+Authorization: Bearer {{token}}
+
+### 5) End chat
+POST {{baseUrl}}/chats/{{chatId}}/end
+Authorization: Bearer {{token}}

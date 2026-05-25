@@ -1,0 +1,209 @@
+### Mental Health Journal API — HTTP Tests
+### Swagger UI: https://localhost:7182/swagger
+@base = https://localhost:7182/api
+
+###############################################################################
+# HEALTH
+###############################################################################
+
+GET https://localhost:7182/health
+
+###############################################################################
+# USERS
+###############################################################################
+
+### 1. Create user
+POST {{base}}/users
+Content-Type: application/json
+
+{
+  "username": "alice",
+  "email": "alice@example.com"
+}
+
+###
+
+### 2. Get user + parameter snapshot  (replace 1 with actual ID)
+GET {{base}}/users/1
+
+###
+
+### 3. Get parameter snapshot only
+GET {{base}}/users/1/parameters
+
+###############################################################################
+# JOURNALS — submit (one step: submit → get full analysis back)
+###############################################################################
+
+### 4. Anxiety + sleep entry
+POST {{base}}/journals
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "content": "I have been feeling really anxious today. I can't stop worrying about everything and I barely slept because my mind was racing all night. Everything feels overwhelming.",
+  "currentScores": {
+    "ANX": 8, "DEP": 3, "STR": 6,
+    "SLP": 5, "SOC": 2, "CDT": 4,
+    "SAFE": 0, "ENG": 10
+  }
+}
+
+###
+
+### 5. Depression + isolation entry
+POST {{base}}/journals
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "content": "Everything feels pointless today. I feel so sad and hopeless. I have been alone all week and feel very isolated from everyone. I can't find any motivation.",
+  "currentScores": {
+    "ANX": 5, "DEP": 8, "STR": 4,
+    "SLP": 3, "SOC": 9, "CDT": 3,
+    "SAFE": 0, "ENG": 4
+  }
+}
+
+###
+
+### 6. Positive entry
+POST {{base}}/journals
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "content": "Today was a good day. I felt happy and motivated. Went for a walk and enjoyed the fresh air. Feeling more engaged and excited about life again.",
+  "currentScores": {
+    "ANX": 3, "DEP": 2, "STR": 2,
+    "SLP": 1, "SOC": 2, "CDT": 1,
+    "SAFE": 0, "ENG": 14
+  }
+}
+
+###
+
+### 7. Crisis entry — triggers "crisis" risk level (SAFE >= 5)
+POST {{base}}/journals
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "content": "I keep thinking about how to hurt myself. Everything feels hopeless and the catastrophic thoughts won't stop. I haven't slept in days and feel completely overwhelmed.",
+  "currentScores": {
+    "ANX": 15, "DEP": 17, "STR": 14,
+    "SLP": 16, "SOC": 12, "CDT": 10,
+    "SAFE": 4,  "ENG": 1
+  }
+}
+
+###############################################################################
+# JOURNALS — read
+###############################################################################
+
+### 8. Get single entry with full analysis  (replace 1 with actual ID)
+GET {{base}}/journals/1
+
+###
+
+### 9. Journal history — lightweight summary list
+GET {{base}}/users/1/journals
+
+###
+
+### 10. Parameter trend — last 10 entries (oldest first)
+GET {{base}}/users/1/trend
+
+###
+
+### 11. Parameter trend — last 5 entries
+GET {{base}}/users/1/trend?limit=5
+
+###############################################################################
+# EXERCISES
+###############################################################################
+
+### 12. All exercises
+GET {{base}}/exercises
+
+###
+
+### 13. Filter by ANX
+GET {{base}}/exercises?parameter=ANX
+
+###
+
+### 14. Filter by DEP
+GET {{base}}/exercises?parameter=DEP
+
+###
+
+### 15. Single exercise by ID
+GET {{base}}/exercises/2
+
+###############################################################################
+# VALIDATION ERRORS — expect 400
+###############################################################################
+
+### 16. Empty content
+POST {{base}}/journals
+Content-Type: application/json
+
+{ "userId": 1, "content": "" }
+
+###
+
+### 17. Content too short (< 10 chars)
+POST {{base}}/journals
+Content-Type: application/json
+
+{ "userId": 1, "content": "short" }
+
+###
+
+### 18. Score out of range (> 20)
+POST {{base}}/journals
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "content": "This is long enough content to pass the minimum length validation rule.",
+  "currentScores": { "ANX": 99 }
+}
+
+###
+
+### 19. Invalid parameter key
+POST {{base}}/journals
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "content": "This is long enough content to pass the minimum length validation rule.",
+  "currentScores": { "UNKNOWN": 5 }
+}
+
+###
+
+### 20. Invalid email
+POST {{base}}/users
+Content-Type: application/json
+
+{ "username": "test", "email": "not-an-email" }
+
+###############################################################################
+# NOT FOUND — expect 404
+###############################################################################
+
+### 21. Unknown user
+GET {{base}}/users/9999
+
+###
+
+### 22. Unknown journal
+GET {{base}}/journals/9999
+
+###
+
+### 23. Unknown exercise
+GET {{base}}/exercises/9999

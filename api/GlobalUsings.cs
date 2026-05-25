@@ -1,0 +1,27 @@
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Logging;
+global using Microsoft.EntityFrameworkCore;
+global using Mapster;
+global using FluentValidation;
+
+global using api.Abstractions;
+global using api.Entities;
+global using api.Services;
+global using api.Persistence;
+global using api.Contracts.Journals;
+global using api.Contracts.Users;
+global using api.Contracts.Authentication;
+global using api.Contracts.Exercises;
+global using api.Contracts.Chats;
+global using api.Contracts.AI;
+global using api.Contracts.Onboarding;
+global using api.Contracts.Account;
+global using api.Contracts.Statistics;
+global using api.Errors;

@@ -1,0 +1,44 @@
+@baseUrl = https://localhost:7116
+@userId = 550e8400-e29b-41d4-a716-446655440000
+
+### Create a new journal entry
+POST {{baseUrl}}/api/journalentries
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "content": "I've been feeling overwhelmed with work and personal responsibilities lately. It's hard to focus on anything.",
+  "currentScores": {
+    "ANX": 6,
+    "DEP": 4,
+    "STR": 7
+  }
+}
+
+###
+
+### Get user's journal history
+GET {{baseUrl}}/api/journalentries/user/{{userId}}
+
+###
+
+### Create another journal entry with different mood
+POST {{baseUrl}}/api/journalentries
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}",
+  "content": "Today was better. I managed to complete my morning exercise routine and felt more energized throughout the day.",
+  "currentScores": {
+    "ANX": 3,
+    "DEP": 2,
+    "STR": 4
+  }
+}
+
+###
+
+### Fetch all entries for the user
+GET {{baseUrl}}/api/journalentries/user/{{userId}}
+
+###
